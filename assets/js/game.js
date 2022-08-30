@@ -2,7 +2,7 @@
 
 // function to generate a random numeric value
 var randomNumber = function(min, max) {
-    var value = Math.floor(Math.random() * (max - min + 1) + min);
+    var value = Math.floor(Math.random() * (max - min) + min);
 
     return value;
 };
@@ -14,13 +14,13 @@ var fightOrSkip = function() {
 
     // validate prompt answer
     if (promptFight === "" || promptFight === null) {
-        window.alert("You need to provide a valid answer! please try again.");
+        window.alert("You need to provide a valid answer! Please try again.");
         // use return to call it again and stop the rest of this function from running
         return fightOrSkip();
     }
 
     // convert promptFight to all lowercase so we can check with less options
-    promptfight = promptFight.toLowerCase();
+    promptFight = promptFight.toLowerCase();
 
     if (promptFight === "skip") {
         // confirm player wants to skip
@@ -123,6 +123,9 @@ var startGame = function() {
 
     // fight each enemy-roboot by looping over them and fighting them one at a time
     for (var i = 0; i < enemyInfo.length; i++) {
+        // check player stats
+        console.log(playerInfo);
+
         // if player is still alive, keep fighting
         if (playerInfo.health > 0) {
             // let player know what round they're in. Reminder: Arrays start with 0, so it needs to have 1 added to it
@@ -133,6 +136,8 @@ var startGame = function() {
 
             // reset enemyHealth before starting enw fight
             pickedEnemyObj.health = randomNumber(40, 60);
+
+            console.log(pickedEnemyObj);
 
             // pass the pickedEnemyName variable's value into the fight function, where it will assume the value of the enemyName parameter
             fight(pickedEnemyObj);
@@ -161,13 +166,22 @@ var startGame = function() {
 
 // function to end the entire game
 var endGame = function() {
-    window.alert("The gamee has now ended. Let's see how you did!");
+    window.alert("The game has now ended. Let's see how you did!");
 
-    // if player is still alive, player wins!
-    if (playerInfo.health > 0) {
-        window.alert("Great job, you've survived the game! You now have a score of " + playerInfo.money + ". ");
+    // check localStorage for high score, if it's not there, use 0
+    var highScore = localStorage.getItem("highscore");
+    if (highScore === null) {
+        highScore = 0;
+    }
+
+    // if player has more money than the high score, player has a new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+
+        alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
     } else {
-        window.alert("You've lost your robot in battle!");
+        alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
     }
     
     // ask the player if they'd like to play again
@@ -188,7 +202,9 @@ var shop = function() {
         "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter 1 to REFILL, 2 to UPGRADE, or 3 to LEAVE."
     );
     
+    // convert answer from prompt to an actual number
     shopOptionPrompt = parseInt(shopOptionPrompt);
+
     // use switch case to carry out action
     switch (shopOptionPrompt) {
         case 1:
@@ -222,7 +238,7 @@ var getPlayerName = function() {
 
 // GAME INFORMATION / VARIABLES
 var playerInfo = {
-    name: window.prompt("What is your robot's name?"),
+    name: getPlayerName(),
     health: 100,
     attack: 10, 
     money: 10,
@@ -241,16 +257,7 @@ var playerInfo = {
             window.alert("You don't have enough money!");
         }
     },
-    upgradeAttack: function() {
-        if (this.money >= 7) {
-            window.alert("Refilling player's health by 20 for 7 dollars.");
-            this.health += 20;
-            this.money -= 7;
-        }
-        else {
-            window.alert("You don't have enough money!");
-        }
-    },
+    
     upgradeAttack: function() {
         if (this.money >= 7) {
             window.alert("Upgrading player's attack by 6 or 7 dollars.");
@@ -278,11 +285,6 @@ var enemyInfo = [
         attack: randomNumber(10, 14)
     }
 ];
-
-console.log(enemyInfo);
-console.log(enemyInfo[0]);
-console.log(enemyInfo[0].name);
-console.log(enemyInfo[0]["attack"]);
 
 // End Game Information / Variables
 
