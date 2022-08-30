@@ -114,7 +114,7 @@ var fight = function(enemy) {
         // switch turn order for next round
         isPlayerTurn = !isPlayerTurn;
         }   // end while loop
-}; // end fight function
+}; // END FIGHT FUNCTION
 
 // function to start a new game
 var startGame = function() {
